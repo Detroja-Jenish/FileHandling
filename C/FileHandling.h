@@ -19,6 +19,7 @@ char* nextWord(FILE* ifptr);
 int fgetNoOfLines(FILE* ifptr);
 int fgetNoOfWords(FILE* ifptr);
 char fgetPreviousChar(FILE* ifptr);
+ char* formatLinePerWords(FILE* ifptr,int n);
 
 int fgetNoOfChars(FILE* ifptr){
 	if(ifptr == NULL){
@@ -27,12 +28,16 @@ int fgetNoOfChars(FILE* ifptr){
 	if(ftell(ifptr) != 0){
 		rewind(ifptr);
 	}
-	int count;
-	char c;
-	for(count = 0, c = fgetc(ifptr); c != EOF; c = fgetc(ifptr), count++){
-	}
+	//int count;
+	//char c;
+	//for(count = 0, c = fgetc(ifptr); c != EOF; c = fgetc(ifptr), count++){
+	//}
+	//rewind(ifptr);
+	//return count;
+	fseek(ifptr, 0, SEEK_END);
+	int n = ftell(ifptr) - 1;
 	rewind(ifptr);
-	return 0;
+	return n;
 }
 
 char* insertNewLineAfterNoOfLine(FILE* ifptr, int n){
@@ -85,7 +90,7 @@ char* fgetWholeRecords(FILE* ifptr){
 	}
 	data[ dataPointer ] = '\0';
 	rewind(ifptr);
-	return 0;
+	return data;
 }
 
 char* deleteBlankLines(FILE* ifptr){
@@ -432,6 +437,9 @@ char* nextWord(FILE* ifptr){
 		}
 		word[dataPointer++] = c;
 	}
+	if(dataPointer == 0){
+		return NULL;
+	}
 	word[dataPointer] = '\0';
 	return word;
 }
@@ -443,18 +451,23 @@ int fgetNoOfWords(FILE* ifptr){
 	if(ftell(ifptr) != 0){
 		rewind(ifptr);
 	}
+//	int count = 0;
+//	char c;
+//	char lastchar = ' ';
+//	for(c = fgetc(ifptr); c!=EOF; c = fgetc(ifptr)){
+//		if((c == ' ' || c == '\t' || c == '\n') && (lastchar != ' ' && lastchar != '\t' && lastchar != '\n')){
+//			count++;
+//		}
+//		lastchar = c;
+//	}
+//	if(c != '\n'){
+//		count++;
+//	}
 	int count = 0;
-	char c;
-	char lastchar = ' ';
-	for(c = fgetc(ifptr); c!=EOF; c = fgetc(ifptr)){
-		if((c == ' ' || c == '\t' || c == '\n') && (lastchar != ' ' && lastchar != '\t' && lastchar != '\n')){
-			count++;
-		}
-		lastchar = c;
-	}
-	if(c != '\n'){
-		count++;
-	}
+	char* word;
+	for(word = nextWord(ifptr); word != NULL; word = nextWord(ifptr)){
+	   count++;
+	}	   
 	rewind(ifptr);
 	return count;
 }
@@ -466,3 +479,32 @@ char fgetPreviousChar(FILE* ifptr){
 	fseek(ifptr , -1, SEEK_CUR);
 	return fgetc(ifptr);
 }
+ char* formatLinePerWords(FILE* ifptr,int n){
+	if(ifptr == NULL){
+		return NULL;
+	}
+	int count = 0;
+	char c;
+	char* data = malloc(61*sizeof(char));
+	int dataPointer = 0;
+	if(ftell(ifptr) != 0 ){
+		rewind(ifptr);
+	}
+	for(c = fgetc(ifptr), dataPointer = 0; c!=EOF; c = fgetc(ifptr) , dataPointer++){
+		if(dataPointer == ((sizeof(*data)/sizeof(char)) - 3)){
+			data = realloc(data, sizeof(*data) + (60*sizeof(char)));
+		}
+		count++;
+		data[dataPointer] = c;
+		if(count == n && c != '\n'){
+			data[dataPointer + 1] = '\n';
+			dataPointer++;
+			count = 0;
+		}else if(c == '\n'){
+			count = 0;
+		}
+	}
+	data[dataPointer] = '\0';
+	rewind(ifptr);
+	return data;
+ }
