@@ -19,7 +19,7 @@ char* nextWord(FILE* ifptr);
 int fgetNoOfLines(FILE* ifptr);
 int fgetNoOfWords(FILE* ifptr);
 char fgetPreviousChar(FILE* ifptr);
- char* formatLinePerWords(FILE* ifptr,int n);
+char* formatLinePerWords(FILE* ifptr,int n);
 
 int fgetNoOfChars(FILE* ifptr){
 	if(ifptr == NULL){
@@ -451,18 +451,18 @@ int fgetNoOfWords(FILE* ifptr){
 	if(ftell(ifptr) != 0){
 		rewind(ifptr);
 	}
-//	int count = 0;
-//	char c;
-//	char lastchar = ' ';
-//	for(c = fgetc(ifptr); c!=EOF; c = fgetc(ifptr)){
-//		if((c == ' ' || c == '\t' || c == '\n') && (lastchar != ' ' && lastchar != '\t' && lastchar != '\n')){
-//			count++;
-//		}
-//		lastchar = c;
-//	}
-//	if(c != '\n'){
-//		count++;
-//	}
+	//	int count = 0;
+	//	char c;
+	//	char lastchar = ' ';
+	//	for(c = fgetc(ifptr); c!=EOF; c = fgetc(ifptr)){
+	//		if((c == ' ' || c == '\t' || c == '\n') && (lastchar != ' ' && lastchar != '\t' && lastchar != '\n')){
+	//			count++;
+	//		}
+	//		lastchar = c;
+	//	}
+	//	if(c != '\n'){
+	//		count++;
+	//	}
 	int count = 0;
 	char* word;
 	for(word = nextWord(ifptr); word != NULL; word = nextWord(ifptr)){
@@ -479,7 +479,8 @@ char fgetPreviousChar(FILE* ifptr){
 	fseek(ifptr , -1, SEEK_CUR);
 	return fgetc(ifptr);
 }
- char* formatLinePerWords(FILE* ifptr,int n){
+
+char* formatLinePerWords(FILE* ifptr,int n){
 	if(ifptr == NULL){
 		return NULL;
 	}
